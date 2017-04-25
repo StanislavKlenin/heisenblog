@@ -1,0 +1,4 @@
+.grid {margin: 0 auto;}
+table.grid td {padding: 5px;}
+table.grid td img {display: block;margin-left: auto; margin-right: auto;}
+

@@ -1,0 +1,7 @@
+/* generic dark / inspired by i3wm docs and afterglow */
+.scheme {background-color:#202020; color: #BBBBBB; font-family: sans-serif;}
+.scheme a:link {color:#0099FF;}
+.scheme a:visited {color:#CC33FF;}
+.scheme table td {background-color:#242424;}
+.scheme .aside   {background-color:#242424; color:#808080;}
+

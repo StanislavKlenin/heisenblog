@@ -1,0 +1,26 @@
+.outer
+{
+    width: 980px; margin: 0px auto;
+}
+.page
+{
+    display: table;
+}
+.inner
+{
+    display: table-cell;
+    padding: 0.5em;
+}
+
+.header
+{
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+}
+.footer
+{
+    padding: 0.5em;
+    margin-top: 0.5em;
+}
+
+

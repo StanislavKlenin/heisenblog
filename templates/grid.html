@@ -1,0 +1,9 @@
+    <table class="grid">
+    $for(rows)-$
+        <tr>
+            $for(cols)-$
+            <td><a name="$name$" href="$url$"><img src="$preview$"/></a></td>
+            $endfor$
+        </tr>
+    $endfor$
+    </table>

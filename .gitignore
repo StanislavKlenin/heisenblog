@@ -1,0 +1,6 @@
+*.swp
+posts/
+img/
+_site/
+_cache/
+.stack-work/
