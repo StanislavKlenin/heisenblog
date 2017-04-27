@@ -10,6 +10,16 @@
 {
     display: table-cell;
     padding: 0.5em;
+    vertical-align: top;
+}
+
+/* apply recursively to children; might be a bad idea */
+.inner *
+{
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .header
@@ -21,6 +31,13 @@
 {
     padding: 0.5em;
     margin-top: 0.5em;
+    font-size: small;
+    text-align: right;
+}
+
+.minutiae
+{
+    font-size: small;
 }
 
 
