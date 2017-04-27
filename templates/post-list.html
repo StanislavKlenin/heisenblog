@@ -1,8 +1,10 @@
 <ul>
     $for(posts)$
         <li>
-            $date$: <a href="$url$">$title$</a>
+            <h2><a href="$url$">$title$</a></h2>
+            <p class="minutiae">$date$</p>
             <p>$teaser$</p>
+            <a href="$url$" class="minutiae">Read more</a>
         </li>
     $endfor$
 </ul>
