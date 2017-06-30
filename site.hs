@@ -113,7 +113,7 @@ main = hakyll $ do
 
 
     -- TODO: move to another file
-    -- a rather hacky (iand not typesafe) way to generate gallery index pages
+    -- a rather hacky (and not typesafe) way to generate gallery index pages
     -- match galleries at any level and generate preview pages
     -- gallery directory MUST have index.html inside (which is a clutch too)
     match "img/gallery/**/index.html" $ do
