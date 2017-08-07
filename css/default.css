@@ -1,11 +1,11 @@
 .outer
 {
-    width: 980px;
     margin: 0px auto;
 }
 .page
 {
     display: table;
+    width: 100%;
 }
 .inner
 {
@@ -33,7 +33,11 @@
     padding: 0.5em;
     margin-top: 0.5em;
     font-size: small;
-    text-align: right;
+    text-align: center;
+}
+.sidebar
+{
+    width: 5em;
 }
 
 .minutiae
