@@ -204,7 +204,7 @@ main = hakyll $ do
             let archiveCtx =
                     --listField "posts" postCtx (return posts) `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
+                    constField "title" "Posts"            `mappend`
                     defaultContext
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
