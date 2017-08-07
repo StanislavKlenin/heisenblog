@@ -86,6 +86,15 @@ noExtRoute = customRoute createIndexRoute
             where
                 p = toFilePath ident
 
+noExtRouteOneUp :: Routes
+noExtRouteOneUp = customRoute createIndexRoute
+    where
+        createIndexRoute ident = takeDirectory (takeDirectory p) </>
+                                 takeBaseName p                  </>
+                                 "index.html"
+            where
+                p = toFilePath ident
+
 -- remove trailing "index.html" from the string
 noExtIndex :: String -> String
 noExtIndex url
@@ -180,7 +189,7 @@ main = hakyll $ do
             >>= noExtUrls
 
     match "common/*" $ do
-        route   $ noExtRoute
+        route   $ noExtRouteOneUp
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
