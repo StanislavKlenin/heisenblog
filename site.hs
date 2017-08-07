@@ -179,6 +179,14 @@ main = hakyll $ do
             >>= relativizeUrls
             >>= noExtUrls
 
+    match "common/*" $ do
+        route   $ noExtRoute
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/post.html"    postCtx
+            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= relativizeUrls
+            >>= noExtUrls
+
     ---create ["archive.html"] $ do
     create ["index.html"] $ do
         route idRoute
@@ -195,6 +203,18 @@ main = hakyll $ do
                 >>= relativizeUrls
                 >>= noExtUrls
 
+    -- incomplete example generating a single page
+    --create ["about.html"] $ do
+    --    route idRoute
+    --    compile $ do
+    --        --about <- load "common/about.markdown"
+    --        let aboutCtx =
+    --                field "body" (\_ -> return "actual data") `mappend`
+    --                defaultContext
+    --        makeItem ""
+    --            >>= loadAndApplyTemplate "templates/default.html" aboutCtx
+    --            >>= relativizeUrls
+    --            >>= noExtUrls
 
     -- save it for later (about page)
     --match "index.html" $ do
