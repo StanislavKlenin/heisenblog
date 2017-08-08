@@ -74,7 +74,11 @@ postCtx =
     dateField "date" "%Y-%m-%d" `mappend`
     defaultContext
 
+teaserCtx :: Context String
 teaserCtx = teaserField "teaser" "content" `mappend` postCtx
+
+taggedCtx :: Tags -> Context String
+taggedCtx tags = tagsField "tags" tags `mappend` postCtx
 
 -- custom route to turn page.markdown into /page/index.html
 noExtRoute :: Routes
@@ -194,9 +198,8 @@ main = hakyll $ do
         route   $ noExtRoute
         compile $ pandocCompiler
             >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            -- >>= loadAndApplyTemplate "templates/post.html"    (teaserField "teaser" "content" `mappend` postCtx)
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/post.html"    (taggedCtx tags)
+            >>= loadAndApplyTemplate "templates/default.html" (taggedCtx tags)
             >>= relativizeUrls
             >>= noExtUrls
 
