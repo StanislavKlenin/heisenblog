@@ -164,18 +164,12 @@ main = hakyll $ do
             pandocCompiler >>= applyTemplate grid ctx
                            >>= loadAndApplyTemplate "templates/default.html" ctx
 
+    -- TODO: generate a page with list of galleries
+
     match "css/**" $ do
         route   idRoute
         compile copyFileCompiler
         --compile compressCssCompiler
-
-    -- this will probably be eliminated
-    match (fromList ["about.rst", "contact.markdown"]) $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
-            >>= relativizeUrls
-            >>= noExtUrls
 
     match "posts/*" $ do
         --route $ setExtension "html"
@@ -188,7 +182,10 @@ main = hakyll $ do
             >>= relativizeUrls
             >>= noExtUrls
 
-    match "common/*" $ do
+    -- common pages
+    match (fromList [ "about.markdown"
+                    , "links.markdown"
+                    , "contact.markdown"]) $ do
         route   $ noExtRouteOneUp
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
