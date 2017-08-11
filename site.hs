@@ -1,17 +1,21 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
-import           Hakyll
-
-import           System.Directory(getDirectoryContents)
-import           System.FilePath (takeDirectory, splitExtension, takeExtension,
-                                  takeFileName, takeBaseName, joinPath, (</>))
+import           Control.Monad.Reader (forM)
 import qualified Data.ByteString.Lazy as LBS
 import           Data.List (intercalate, isSuffixOf, sortBy)
+import           Data.Monoid (mappend)
 import           Data.Ord  (comparing)
-import           Control.Monad.Reader (forM)
+import           Hakyll
+import           System.Directory (getDirectoryContents)
+import           System.FilePath ( takeDirectory
+                                 , splitExtension
+                                 , takeExtension
+                                 , takeFileName
+                                 , takeBaseName
+                                 , joinPath
+                                 , (</>)
+                                 )
 
-import           Debug.Trace
 
 --
 -- image grid related code
@@ -61,9 +65,11 @@ getId (Item id _) = id
 photoCompiler = getResourceLBS >>= withItemBody photoFilter
 
 photoFilter :: LBS.ByteString -> Compiler LBS.ByteString
-photoFilter = unixFilterLBS "convert" ["-", "-auto-orient",
-                                       "-resize", "300x300",
-                                       "-"]
+photoFilter = unixFilterLBS "convert" [ "-"
+                                      , "-auto-orient"
+                                      , "-resize", "300x300"
+                                      , "-"
+                                      ]
 
 -- order items by file modification time
 mtimeOrdered :: [Item a] -> Compiler [Item a]
