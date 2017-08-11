@@ -7,8 +7,9 @@ import           System.Directory(getDirectoryContents)
 import           System.FilePath (takeDirectory, splitExtension, takeExtension,
                                   takeFileName, takeBaseName, joinPath, (</>))
 import qualified Data.ByteString.Lazy as LBS
-import           Data.List (intercalate, isSuffixOf)
-import           Control.Monad.Reader (liftIO)
+import           Data.List (intercalate, isSuffixOf, sortBy)
+import           Data.Ord  (comparing)
+import           Control.Monad.Reader (forM)
 
 import           Debug.Trace
 
@@ -63,6 +64,15 @@ photoFilter :: LBS.ByteString -> Compiler LBS.ByteString
 photoFilter = unixFilterLBS "convert" ["-", "-auto-orient",
                                        "-resize", "300x300",
                                        "-"]
+
+-- order items by file modification time
+mtimeOrdered :: [Item a] -> Compiler [Item a]
+mtimeOrdered items = do
+    itemsWithTime <- forM items $ \item -> do
+        mtime <- getItemModificationTime (itemIdentifier item)
+        return (mtime, item)
+    return (map snd (sortBy (comparing fst) itemsWithTime))
+
 
 --
 -- generic Hakyll stuff
@@ -157,7 +167,7 @@ main = hakyll $ do
             -- load images
             let dir = takeDirectory path
             let pattern = fromGlob $ dir ++ "/*.jpg"
-            loaded <- loadAll (pattern .&&. hasNoVersion)
+            loaded <- mtimeOrdered =<< loadAll (pattern .&&. hasNoVersion)
             -- convert images to plain strings; keep file names only
             let names = map (takeFileName . getFilePath . getBody) loaded
             -- unflatten them into a grid
