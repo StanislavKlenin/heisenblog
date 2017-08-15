@@ -235,15 +235,20 @@ main = hakyll $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
+            renderedTags <- renderTagList tags
+            -- or something like this:
+            --renderedTags <- renderTagCloud 50 100 tags
             let archiveCtx =
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Posts"                 `mappend`
+                    constField "tags" renderedTags             `mappend`
                     defaultContext
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
                 >>= noExtUrls
+
 
     -- incomplete example generating a single page
     --create ["about.html"] $ do
