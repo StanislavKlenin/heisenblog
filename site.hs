@@ -162,14 +162,15 @@ main = hakyll $ do
     -- TODO: move to another file
     -- a rather hacky (and not typesafe) way to generate gallery index pages
     -- match galleries at any level and generate preview pages
-    -- gallery directory MUST have index.html inside (which is a clutch too)
-    match "img/gallery/**/index.html" $ do
+    -- gallery directory MUST have index.html inside (which is a crutch too)
+    --match "img/gallery/**/index.html" $ do
+    match "img/gallery/**/index.markdown" $ do
         route   $ setExtension "html"
         compile $ do
             -- path to matched file
             path <- fmap toFilePath getUnderlying
             -- grid template
-            grid <- loadBody "templates/grid.html"
+            --grid <- loadBody "templates/grid.html"
             -- load images
             let dir = takeDirectory path
             let pattern = fromGlob $ dir ++ "/*.jpg"
@@ -193,13 +194,18 @@ main = hakyll $ do
                                 (sequence (map makeItem structured)) `mappend`
                       -- this field is actually for another template, default
                       -- (see below)
-                      constField "title" ("Image index: " ++ dir) `mappend`
+                      --constField "title" ("Image index: " ++ dir) `mappend`
                       defaultContext
 
             -- apply template and compile
             -- apply grid template, then load and apply default template
             -- TODO: there's not really a need to load the grid template earlier
-            pandocCompiler >>= applyTemplate grid ctx
+
+
+            --pandocCompiler >>= applyTemplate grid ctx
+            pandocCompiler
+                           >>= loadAndApplyTemplate "templates/grid.html"    ctx
+                           >>= loadAndApplyTemplate "templates/post.html"    ctx
                            >>= loadAndApplyTemplate "templates/default.html" ctx
 
     -- TODO: generate a page with list of galleries
