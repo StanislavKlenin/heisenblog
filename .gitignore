@@ -1,4 +1,5 @@
 *.swp
+*.markdown
 posts/
 img/
 _site/
