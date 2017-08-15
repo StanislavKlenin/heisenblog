@@ -162,15 +162,12 @@ main = hakyll $ do
     -- TODO: move to another file
     -- a rather hacky (and not typesafe) way to generate gallery index pages
     -- match galleries at any level and generate preview pages
-    -- gallery directory MUST have index.html inside (which is a crutch too)
-    --match "img/gallery/**/index.html" $ do
+    -- gallery directory MUST have index.markdown inside (which is a crutch too)
     match "img/gallery/**/index.markdown" $ do
         route   $ setExtension "html"
         compile $ do
             -- path to matched file
             path <- fmap toFilePath getUnderlying
-            -- grid template
-            --grid <- loadBody "templates/grid.html"
             -- load images
             let dir = takeDirectory path
             let pattern = fromGlob $ dir ++ "/*.jpg"
@@ -178,7 +175,6 @@ main = hakyll $ do
             -- convert images to plain strings; keep file names only
             let names = map (takeFileName . getFilePath . getBody) loaded
             -- unflatten them into a grid
-            -- TODO: set number of columns somewhere as a constant
             let structured = unflatten gridColumns names
 
             -- prepare context with nested loops and nested templates
@@ -192,21 +188,21 @@ main = hakyll $ do
                                                   (sequence . map makeItem . itemBody)
                                 )
                                 (sequence (map makeItem structured)) `mappend`
-                      -- this field is actually for another template, default
-                      -- (see below)
+                      -- title field is now pulled from index.markdown
                       --constField "title" ("Image index: " ++ dir) `mappend`
                       defaultContext
 
             -- apply template and compile
             -- apply grid template, then load and apply default template
-            -- TODO: there's not really a need to load the grid template earlier
-
-
-            --pandocCompiler >>= applyTemplate grid ctx
+            -- also apply post template to allow for gallery description
             pandocCompiler
                            >>= loadAndApplyTemplate "templates/grid.html"    ctx
                            >>= loadAndApplyTemplate "templates/post.html"    ctx
                            >>= loadAndApplyTemplate "templates/default.html" ctx
+                           >>= relativizeUrls
+                           >>= noExtUrls
+
+
 
     -- TODO: generate a page with list of galleries
 
