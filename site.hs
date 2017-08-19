@@ -205,6 +205,9 @@ main = hakyll $ do
 
 
     -- TODO: generate a page with list of galleries
+    --create ["galleries.html"] $ do
+    --    route idRoute
+    --    compile $ do
 
     match "css/**" $ do
         route   idRoute
@@ -224,6 +227,7 @@ main = hakyll $ do
     -- common pages
     match (fromList [ "about.markdown"
                     , "links.markdown"
+                    , "photography.markdown"
                     , "contact.markdown"]) $ do
         route   $ noExtRouteOneUp
         compile $ pandocCompiler
