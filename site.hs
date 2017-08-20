@@ -142,7 +142,7 @@ main = hakyll $ do
             makeItem ""
                 >>= loadAndApplyTemplate "templates/tag.html" ctx
                 >>= loadAndApplyTemplate "templates/default.html" ctx
-                >>= relativizeUrls
+                -- >>= relativizeUrls
                 >>= noExtUrls
 
 
@@ -199,7 +199,7 @@ main = hakyll $ do
                            >>= loadAndApplyTemplate "templates/grid.html"    ctx
                            >>= loadAndApplyTemplate "templates/post.html"    ctx
                            >>= loadAndApplyTemplate "templates/default.html" ctx
-                           >>= relativizeUrls
+                           -- >>= relativizeUrls
                            >>= noExtUrls
 
 
@@ -221,7 +221,7 @@ main = hakyll $ do
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html"    (taggedCtx tags)
             >>= loadAndApplyTemplate "templates/default.html" (taggedCtx tags)
-            >>= relativizeUrls
+            -- >>= relativizeUrls
             >>= noExtUrls
 
     -- common pages
@@ -233,7 +233,7 @@ main = hakyll $ do
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
-            >>= relativizeUrls
+            -- >>= relativizeUrls
             >>= noExtUrls
 
     ---create ["archive.html"] $ do
@@ -252,7 +252,7 @@ main = hakyll $ do
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
-                >>= relativizeUrls
+                -- >>= relativizeUrls
                 >>= noExtUrls
 
 
