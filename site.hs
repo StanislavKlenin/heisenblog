@@ -96,6 +96,17 @@ teaserCtx = teaserField "teaser" "content" `mappend` postCtx
 taggedCtx :: Tags -> Context String
 taggedCtx tags = tagsField "tags" tags `mappend` postCtx
 
+-- context with either one field or missing field,
+-- depending on given condition
+optionalFieldCtx :: String -> String -> Bool -> Context String
+optionalFieldCtx field value condition =
+    if condition
+        then constField field value
+        else missingField
+
+nonEmptyValueCtx :: String -> String -> Context String
+nonEmptyValueCtx field value = optionalFieldCtx field value (value /= "")
+
 -- custom route to turn page.markdown into /page/index.html
 noExtRoute :: Routes
 noExtRoute = customRoute createIndexRoute
@@ -247,7 +258,7 @@ main = hakyll $ do
             let archiveCtx =
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Posts"                 `mappend`
-                    constField "tags" renderedTags             `mappend`
+                    nonEmptyValueCtx "tags" renderedTags       `mappend`
                     defaultContext
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
