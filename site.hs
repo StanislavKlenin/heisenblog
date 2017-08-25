@@ -137,9 +137,11 @@ noExtIndex url
 noExtUrls :: Item String -> Compiler (Item String)
 noExtUrls = return . fmap (withUrls noExtIndex)
 --------------------------------------------------------------------------------
-main :: IO ()
-main = hakyll $ do
 
+-- huge function which does all the heavy lifting
+-- (perfect candidate for refactoring)
+site :: Configuration -> IO ()
+site conf = hakyllWith conf $ do
     tags <- buildTags "posts/*" (fromCapture "tags/*.html")
 
     tagsRules tags $ \tag pattern -> do
@@ -296,5 +298,11 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
+main :: IO ()
+main = do
+    -- TODO: override these options; preferably at runtime
+    let conf = defaultConfiguration { destinationDirectory = "_site"
+                                    , providerDirectory    = "." }
+    site conf
 
 --------------------------------------------------------------------------------
