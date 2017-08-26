@@ -1,5 +1,6 @@
 *.swp
 *.markdown
+content/
 posts/
 img/
 _site/
