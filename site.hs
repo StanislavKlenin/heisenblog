@@ -2,7 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Control.Monad.Reader (forM)
 import qualified Data.ByteString.Lazy as LBS
-import           Data.List (intercalate, isSuffixOf, sortBy)
+import           Data.List (intercalate, isSuffixOf, sortBy, stripPrefix)
+import           Data.Maybe (fromMaybe)
 import           Data.Monoid (mappend)
 import           Data.Ord  (comparing)
 import           Hakyll
@@ -126,6 +127,26 @@ noExtRouteOneUp = customRoute createIndexRoute
             where
                 p = toFilePath ident
 
+noExtRouteOneUpAlt :: Routes
+noExtRouteOneUpAlt = customRoute createIndexRoute
+    where
+        createIndexRoute ident = takeBaseName (takeDirectory p) </>
+                                 takeBaseName p                  </>
+                                 "index.html"
+            where
+                p = toFilePath ident
+
+noExtRouteTwoUp :: Routes
+noExtRouteTwoUp = customRoute createIndexRoute
+    where
+        createIndexRoute ident =
+            takeDirectory (takeDirectory (takeDirectory p)) </>
+            takeBaseName p                                  </>
+            "index.html"
+            where
+                p = toFilePath ident
+
+
 -- remove trailing "index.html" from the string
 noExtIndex :: String -> String
 noExtIndex url
@@ -142,7 +163,7 @@ noExtUrls = return . fmap (withUrls noExtIndex)
 -- (perfect candidate for refactoring)
 site :: Configuration -> IO ()
 site conf = hakyllWith conf $ do
-    tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+    tags <- buildTags "content/posts/*" (fromCapture "tags/*.html")
 
     tagsRules tags $ \tag pattern -> do
         route   $ noExtRoute
@@ -159,16 +180,27 @@ site conf = hakyllWith conf $ do
                 >>= noExtUrls
 
 
+    -- reserved for structure-related images
     match "img/*" $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "img/gallery/**.jpg" $ do
+    -- this is for content-related images; name clashes are not prevented
+    match "img/*" $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "img/gallery/**.jpg" $ version "preview" $ do
-        route   $ gsubRoute ".jpg" (const $ previewSuffix ++ ".jpg")
+    -- match gallery images
+
+    -- strip content prefix
+    match "content/img/gallery/**.jpg" $ do
+        route   $ gsubRoute "content/" (const "")
+        compile copyFileCompiler
+
+    -- strip content prefix and insert preview suffix
+    match "content/img/gallery/**.jpg" $ version "preview" $ do
+        route   $ gsubRoute "content/" (const "") `composeRoutes`
+                  gsubRoute ".jpg" (const $ previewSuffix ++ ".jpg")
         compile $ photoCompiler
 
 
@@ -176,14 +208,18 @@ site conf = hakyllWith conf $ do
     -- a rather hacky (and not typesafe) way to generate gallery index pages
     -- match galleries at any level and generate preview pages
     -- gallery directory MUST have index.markdown inside (which is a crutch too)
-    match "img/gallery/**/index.markdown" $ do
-        route   $ setExtension "html"
+    match "content/img/gallery/**/index.markdown" $ do
+        route   $ setExtension "html" `composeRoutes`
+                  gsubRoute "content/" (const "")
         compile $ do
             -- path to matched file
             path <- fmap toFilePath getUnderlying
             -- load images
-            let dir = takeDirectory path
-            let pattern = fromGlob $ dir ++ "/*.jpg"
+            -- this is an actual directory
+            let dir' = takeDirectory path
+            -- while this is for the urls (stripped content prefix)
+            let dir  = fromMaybe dir' (stripPrefix "content/" dir')
+            let pattern = fromGlob $ dir' ++ "/*.jpg"
             loaded <- mtimeOrdered =<< loadAll (pattern .&&. hasNoVersion)
             -- convert images to plain strings; keep file names only
             let names = map (takeFileName . getFilePath . getBody) loaded
@@ -227,9 +263,9 @@ site conf = hakyllWith conf $ do
         compile copyFileCompiler
         --compile compressCssCompiler
 
-    match "posts/*" $ do
-        --route $ setExtension "html"
-        route   $ noExtRoute
+    -- posts
+    match "content/posts/*" $ do
+        route   $ noExtRouteOneUpAlt
         compile $ pandocCompiler
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html"    (taggedCtx tags)
@@ -237,12 +273,10 @@ site conf = hakyllWith conf $ do
             -- >>= relativizeUrls
             >>= noExtUrls
 
-    -- common pages
-    match (fromList [ "about.markdown"
-                    , "links.markdown"
-                    , "photography.markdown"
-                    , "contact.markdown"]) $ do
-        route   $ noExtRouteOneUp
+
+    -- non-post content (about, links, contact, etc)
+    match "content/*.markdown" $ do
+        route   $ noExtRouteTwoUp
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
@@ -253,7 +287,7 @@ site conf = hakyllWith conf $ do
     create ["index.html"] $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
+            posts <- recentFirst =<< loadAll "content/posts/*"
             renderedTags <- renderTagList tags
             -- or something like this:
             --renderedTags <- renderTagCloud 50 100 tags
