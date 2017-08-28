@@ -57,7 +57,7 @@ getFilePath (CopyFile fp) = fp
 
 -- extract item body
 getBody :: Item a -> a
-getBody (Item id body) = body
+getBody (Item _ body) = body
 
 -- extract item id
 getId :: Item a -> Identifier
@@ -301,34 +301,6 @@ site conf = hakyllWith conf $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 -- >>= relativizeUrls
                 >>= noExtUrls
-
-
-    -- incomplete example generating a single page
-    --create ["about.html"] $ do
-    --    route idRoute
-    --    compile $ do
-    --        --about <- load "common/about.markdown"
-    --        let aboutCtx =
-    --                field "body" (\_ -> return "actual data") `mappend`
-    --                defaultContext
-    --        makeItem ""
-    --            >>= loadAndApplyTemplate "templates/default.html" aboutCtx
-    --            >>= relativizeUrls
-    --            >>= noExtUrls
-
-    -- save it for later (about page)
-    --match "index.html" $ do
-    --    route idRoute
-    --    compile $ do
-    --        posts <- recentFirst =<< loadAll "posts/*"
-    --        let indexCtx =
-    --                listField "posts" postCtx (return posts) `mappend`
-    --                constField "title" "Home"                `mappend`
-    --                defaultContext
-    --        getResourceBody
-    --            >>= applyAsTemplate indexCtx
-    --            >>= loadAndApplyTemplate "templates/default.html" indexCtx
-    --            >>= relativizeUrls
 
     match "templates/*" $ compile templateBodyCompiler
 
