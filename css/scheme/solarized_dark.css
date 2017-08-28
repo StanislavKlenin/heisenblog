@@ -4,4 +4,4 @@
 .scheme a:visited {color:#d33682;}
 .scheme table td {background-color:#073642;}
 .scheme .aside   {background-color:#073642; color:#586e75;}
-
+.scheme .sourceCode pre { border: 2px solid #073642; }
