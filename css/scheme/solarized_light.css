@@ -4,4 +4,4 @@
 .scheme a:visited {color:#d33682;}
 .scheme table td {background-color:#eee8d5;}
 .scheme .aside   {background-color:#eee8d5;color:#93a1a1;}
-.scheme .sourceCode pre { border: 2px solid #eee8d5; }
+.scheme .sourceCode pre { border-color: #eee8d5; }
